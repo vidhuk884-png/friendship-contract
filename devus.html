@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contract Renewal</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:420px;
+box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
+
+h2{
+text-align:center;
+color:#333;
+}
+
+label{
+display:block;
+margin-top:10px;
+font-size:13px;
+color:#444;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:1px solid #ddd;
+border-radius:8px;
+font-size:14px;
+color:black;
+}
+
+canvas{
+width:100%;
+height:120px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:5px;
+}
+
+textarea{
+width:100%;
+padding:10px;
+margin-top:5px;
+border-radius:8px;
+border:1px solid #ddd;
+resize:none;
+color:black;
+}
+
+button{
+margin-top:12px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.signBtn{
+background:linear-gradient(90deg,#c471ed,#12c2e9);
+color:white;
+}
+
+.downloadBtn{
+background:#4CAF50;
+color:white;
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Contract Renewal</h2>
+
+<label>Your Name</label>
+<input id="nameInput" type="text" placeholder="Enter your name">
+
+<label>Date</label>
+<input id="dateInput" type="date">
+
+<label>Contract Duration</label>
+<select id="durationInput">
+<option>1 Year</option>
+<option>2 Years</option>
+<option>3 Years</option>
+<option>5 Years</option>
+<option>Lifetime</option>
+</select>
+
+<label>Friendship Terms</label>
+<textarea rows="5" readonly>
+1. Unlimited fun
+2. Always together till contract expires
+3. 24/7 calls and chat available
+4. Ghosting each other will cause 10 years prison time
+5. Should meet each other at least once in 6 months
+</textarea>
+
+<label>Signature</label>
+<canvas id="signaturePad"></canvas>
+
+<button class="signBtn" onclick="signContract()">Sign Contract</button>
+
+<button class="downloadBtn" id="downloadBtn" onclick="downloadCertificate()">Download Certificate</button>
+
+</div>
+
+<script>
+
+let canvas=document.getElementById("signaturePad");
+let ctx=canvas.getContext("2d");
+let drawing=false;
+
+canvas.width=canvas.offsetWidth;
+canvas.height=canvas.offsetHeight;
+
+canvas.addEventListener("mousedown",start);
+canvas.addEventListener("mouseup",stop);
+canvas.addEventListener("mousemove",draw);
+
+canvas.addEventListener("touchstart",startTouch);
+canvas.addEventListener("touchend",stop);
+canvas.addEventListener("touchmove",drawTouch);
+
+function start(e){
+drawing=true;
+ctx.beginPath();
+ctx.moveTo(e.offsetX,e.offsetY);
+}
+
+function draw(e){
+if(!drawing) return;
+ctx.lineWidth=2;
+ctx.lineCap="round";
+ctx.strokeStyle="black";
+ctx.lineTo(e.offsetX,e.offsetY);
+ctx.stroke();
+}
+
+function stop(){
+drawing=false;
+}
+
+function startTouch(e){
+drawing=true;
+let rect=canvas.getBoundingClientRect();
+ctx.beginPath();
+ctx.moveTo(e.touches[0].clientX-rect.left,e.touches[0].clientY-rect.top);
+}
+
+function drawTouch(e){
+if(!drawing) return;
+let rect=canvas.getBoundingClientRect();
+ctx.lineWidth=2;
+ctx.lineCap="round";
+ctx.strokeStyle="black";
+ctx.lineTo(e.touches[0].clientX-rect.left,e.touches[0].clientY-rect.top);
+ctx.stroke();
+}
+
+function signContract(){
+
+let name=document.getElementById("nameInput").value;
+
+if(name===""){
+alert("Please enter your name first");
+return;
+}
+
+document.getElementById("downloadBtn").style.display="block";
+
+alert("Congratulations!!!!! You and Vidhu are friends till the selected contract duration.");
+
+}
+
+function downloadCertificate(){
+
+let name=document.getElementById("nameInput").value;
+let date=document.getElementById("dateInput").value;
+let duration=document.getElementById("durationInput").value;
+
+let cert=document.createElement("canvas");
+cert.width=800;
+cert.height=500;
+let c=cert.getContext("2d");
+
+c.fillStyle="#fff";
+c.fillRect(0,0,800,500);
+
+c.fillStyle="#333";
+c.font="40px Arial";
+c.fillText("Friendship Certificate",220,100);
+
+c.font="24px Arial";
+c.fillText("This certifies that",310,180);
+
+c.font="30px Arial";
+c.fillText(name+" & Vidhu",300,230);
+
+c.font="22px Arial";
+c.fillText("have renewed their friendship contract.",220,280);
+
+c.fillText("Duration: "+duration,300,330);
+
+c.fillText("Date: "+date,330,370);
+
+let link=document.createElement("a");
+link.download="friendship_certificate.png";
+link.href=cert.toDataURL();
+link.click();
+
+}
+
+</script>
+
+</body>
+</html>
